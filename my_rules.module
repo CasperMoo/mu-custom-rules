@@ -1,0 +1,9 @@
+#!name=My Direct Rules
+#!desc=自定义直连规则 - 美团、桑凯域名不走代理
+#!openUrl=
+#!author=
+
+[Rule]
+# 美团相关域名直连
+DOMAIN-SUFFIX,sankuai.com,DIRECT
+DOMAIN-SUFFIX,meituan.com,DIRECT
