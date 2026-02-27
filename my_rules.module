@@ -1,14 +1,37 @@
 #!name=My Custom Rules
-#!desc=自定义规则 - 直连国内服务，代理 ChatGPT
+#!desc=自定义规则 - 直连国内服务，代理 ChatGPT/Google/Anthropic
 #!openUrl=
 #!author=
 
 [Rule]
-# ChatGPT 走代理
+# ChatGPT/OpenAI 走代理
 DOMAIN-SUFFIX,chatgpt.com,PROXY
-DOMAIN-SUFFIX,oaistatic.com,PROXY
-DOMAIN-SUFFIX,oaiusercontent.com,PROXY
+DOMAIN-SUFFIX,chat.openai.com,PROXY
 DOMAIN-SUFFIX,openai.com,PROXY
+DOMAIN-SUFFIX,auth0.openai.com,PROXY
+DOMAIN-SUFFIX,oaistatic.com,PROXY
+DOMAIN-SUFFIX,oaicdn.com,PROXY
+DOMAIN-SUFFIX,oaiusercontent.com,PROXY
+DOMAIN-SUFFIX,chatgpt.livekit.cloud,PROXY
+DOMAIN-SUFFIX,statsig.com,PROXY
+DOMAIN-SUFFIX,statsigapi.net,PROXY
+DOMAIN-SUFFIX,featuregates.org,PROXY
+DOMAIN-SUFFIX,intercom.io,PROXY
+DOMAIN-SUFFIX,intercomcdn.com,PROXY
+
+# Anthropic/Claude 走代理
+DOMAIN-SUFFIX,anthropic.com,PROXY
+DOMAIN-SUFFIX,claude.ai,PROXY
+
+# Google 走代理
+DOMAIN-SUFFIX,google.com,PROXY
+DOMAIN-SUFFIX,googleapis.com,PROXY
+DOMAIN-SUFFIX,gstatic.com,PROXY
+DOMAIN-SUFFIX,googleusercontent.com,PROXY
+DOMAIN-SUFFIX,youtube.com,PROXY
+DOMAIN-SUFFIX,ytimg.com,PROXY
+DOMAIN-SUFFIX,ggpht.com,PROXY
+DOMAIN-SUFFIX,youtu.be,PROXY
 
 # 微信相关域名直连
 DOMAIN-SUFFIX,weixin.qq.com,DIRECT
