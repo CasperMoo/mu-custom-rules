@@ -47,6 +47,13 @@ DOMAIN-SUFFIX,alipay.com,DIRECT
 DOMAIN-SUFFIX,alipayobjects.com,DIRECT
 DOMAIN-SUFFIX,alicdn.com,DIRECT
 
+# WhatsApp 走代理
+# whatsapp.net 覆盖所有媒体/通话服务器（mmg, fna, cdn 等子域）
+DOMAIN-SUFFIX,whatsapp.com,PROXY
+DOMAIN-SUFFIX,whatsapp.net,PROXY
+DOMAIN-SUFFIX,wa.me,PROXY
+DOMAIN-SUFFIX,whatsapp.biz,PROXY
+
 # 美团相关域名直连
 DOMAIN-SUFFIX,sankuai.com,DIRECT
 DOMAIN-SUFFIX,meituan.com,DIRECT
