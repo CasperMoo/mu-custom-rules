@@ -1,9 +1,29 @@
-#!name=My Direct Rules
-#!desc=自定义直连规则 - 美团、桑凯域名不走代理
+#!name=My Custom Rules
+#!desc=自定义规则 - 直连国内服务，代理 ChatGPT
 #!openUrl=
 #!author=
 
 [Rule]
+# ChatGPT 走代理
+DOMAIN-SUFFIX,chatgpt.com,PROXY
+DOMAIN-SUFFIX,oaistatic.com,PROXY
+DOMAIN-SUFFIX,oaiusercontent.com,PROXY
+DOMAIN-SUFFIX,openai.com,PROXY
+
+# 微信相关域名直连
+DOMAIN-SUFFIX,weixin.qq.com,DIRECT
+DOMAIN-SUFFIX,wechat.com,DIRECT
+DOMAIN-SUFFIX,servicewechat.com,DIRECT
+DOMAIN-SUFFIX,res.wx.qq.com,DIRECT
+DOMAIN-SUFFIX,wx.qq.com,DIRECT
+
+# 淘宝相关域名直连
+DOMAIN-SUFFIX,taobao.com,DIRECT
+DOMAIN-SUFFIX,tmall.com,DIRECT
+DOMAIN-SUFFIX,alipay.com,DIRECT
+DOMAIN-SUFFIX,alipayobjects.com,DIRECT
+DOMAIN-SUFFIX,alicdn.com,DIRECT
+
 # 美团相关域名直连
 DOMAIN-SUFFIX,sankuai.com,DIRECT
 DOMAIN-SUFFIX,meituan.com,DIRECT
