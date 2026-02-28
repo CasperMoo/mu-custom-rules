@@ -3,7 +3,16 @@
 #!openUrl=
 #!author=
 
+[Host]
+# 美团域名使用系统 DNS，绕过 FakeIP
+*.sankuai.com = server:system
+*.meituan.com = server:system
+
 [Rule]
+# 美团相关域名直连（放最前面确保优先匹配）
+DOMAIN-SUFFIX,sankuai.com,DIRECT
+DOMAIN-SUFFIX,meituan.com,DIRECT
+
 # ChatGPT/OpenAI 走代理
 DOMAIN-SUFFIX,chatgpt.com,PROXY
 DOMAIN-SUFFIX,chat.openai.com,PROXY
@@ -54,6 +63,3 @@ DOMAIN-SUFFIX,whatsapp.net,PROXY
 DOMAIN-SUFFIX,wa.me,PROXY
 DOMAIN-SUFFIX,whatsapp.biz,PROXY
 
-# 美团相关域名直连
-DOMAIN-SUFFIX,sankuai.com,DIRECT
-DOMAIN-SUFFIX,meituan.com,DIRECT
