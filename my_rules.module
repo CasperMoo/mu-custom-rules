@@ -3,10 +3,8 @@
 #!openUrl=
 #!author=
 
-[Host]
-# 美团域名使用系统 DNS，绕过 FakeIP
-*.sankuai.com = server:system
-*.meituan.com = server:system
+[General]
+skip-proxy = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com
 
 [Rule]
 # ChatGPT/OpenAI 走代理
@@ -58,4 +56,3 @@ DOMAIN-SUFFIX,whatsapp.com,PROXY
 DOMAIN-SUFFIX,whatsapp.net,PROXY
 DOMAIN-SUFFIX,wa.me,PROXY
 DOMAIN-SUFFIX,whatsapp.biz,PROXY
-
