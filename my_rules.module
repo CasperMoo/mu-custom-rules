@@ -8,16 +8,6 @@
 *.sankuai.com = server:system
 *.meituan.com = server:system
 
-[Bypass]
-# 内网 IP 完全绕过 VPN 接口
-10.0.0.0/8
-172.16.0.0/12
-192.168.0.0/16
-127.0.0.1
-localhost
-*.sankuai.com
-*.meituan.com
-
 [Rule]
 # ChatGPT/OpenAI 走代理
 DOMAIN-SUFFIX,chatgpt.com,PROXY
