@@ -9,6 +9,11 @@
 *.meituan.com = server:system
 
 [Rule]
+# 美团内网 IP 绕过 VPN（解决 ERR_TUNNEL_CONNECTION_FAILED）
+IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+
 # 美团相关域名直连（放最前面确保优先匹配）
 DOMAIN-SUFFIX,sankuai.com,DIRECT
 DOMAIN-SUFFIX,meituan.com,DIRECT
