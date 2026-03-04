@@ -4,13 +4,20 @@
 #!author=
 
 [General]
-skip-proxy = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, 100.100.100.100, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com
-
-[Host]
-# Tailscale DNS 直连
-100.100.100.100 = direct
+# skip-proxy: 让指定域名/IP 完全绕过 SR 的 TUN 接管，由系统直接处理
+# 注意：skip-proxy 在 TUN 层之前生效，比 [Rule] 更优先
+skip-proxy = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, 100.100.100.100, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
 
 [Rule]
+# ============ 最高优先级：Tailscale 直连 ============
+# Tailscale 使用 CGNAT 地址段 (100.64.0.0/10)
+# no-resolve 避免触发不必要的 DNS 查询
+IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve
+# Tailscale Magic DNS
+IP-CIDR,100.100.100.100/32,DIRECT
+
+# ============ 代理规则 ============
 # ChatGPT/OpenAI 走代理
 DOMAIN-SUFFIX,chatgpt.com,PROXY
 DOMAIN-SUFFIX,chat.openai.com,PROXY
