@@ -1,0 +1,78 @@
+# Tailscale 与 Shadowrocket 路由冲突解决方案
+
+## 问题现象
+
+| 状态 | Ping Tailscale 设备 | 原因 |
+|------|---------------------|------|
+| SR 开启 | 100% 丢包 | SR 创建的路由覆盖了 Tailscale |
+| SR 关闭 | 0% 丢包 | Tailscale 路由正常 |
+
+## 根本原因
+
+### 路由冲突机制
+
+```
+SR 开启时的路由表：
+100.64/10 → 物理网关 → en0 (SR 创建的高优先级路由) ❌
+100.64/10 → utun      (Tailscale，被覆盖)
+
+SR 关闭时的路由表：
+100.64/10 → utun (Tailscale) ✅
+```
+
+### 为什么会这样？
+
+订阅配置中的 `bypass-tun` 包含 `100.64.0.0/10`（CGNAT 地址段）。
+
+`bypass-tun` 的作用是告诉系统："发往这些 IP 的流量不要走 TUN"。
+
+macOS/iOS 实现这个"排除"的方式是：**创建一条指向物理默认网关的最高优先级路由**。
+
+**问题在于**：`100.64.0.0/10` 被 Tailscale 使用，但被 SR 当作"局域网"排除了，导致流量被错误地导向物理网卡而非 Tailscale 的 TUN。
+
+## 解决方案
+
+### 核心思路
+
+在 Module 中重写 `bypass-tun`，**剔除 `100.64.0.0/10`**，同时在 `skip-proxy` 和 `[Rule]` 中添加 Tailscale 网段。
+
+### Module 配置
+
+```ini
+[General]
+# 重写 bypass-tun：复制原配置，但删除 100.64.0.0/10
+bypass-tun = 10.0.0.0/8,127.0.0.0/0/8,169.254.0.0/16,172.16.0.0/12,192.0.0.0/24,192.0.2.0/24,192.88.99.0/24,192.168.0.0/16,198.18.0.0/15,198.51.100.0/24,203.0.113.0/24,233.252.0.0/24,224.0.0.0/4,255.255.255.255/32,::1/128,::ffff:0:0/96,::ffff:0:0/0/96,64:ff9b::/96,64:ff9b:1::/48,100::/64,2001::/32,2001:20::/28,2001:db8::/32,2002::/16,3fff::/20,5f00::/16,fc00::/7,fe80::/10,ff00::/8
+
+# skip-proxy：添加 100.64.0.0/10 防止 HTTP 代理引擎拦截
+skip-proxy = 100.64.0.0/10, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 127.0.0.1, localhost, *.local, *.lan, *.yourdomain.com
+
+[Rule]
+# Tailscale 直连规则
+IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve
+```
+
+### 应用步骤
+
+1. 更新 Module 文件并推送到 GitHub
+2. 在 Shadowrocket 中更新模块
+3. **彻底关闭 SR 开关，再重新打开**（触发 NetworkExtension 重建路由表）
+
+## 关键结论
+
+| 配置项 | 作用 | 注意事项 |
+|--------|------|----------|
+| `bypass-tun` | 排除的 IP 不走 TUN | 系统会创建指向物理网关的路由 |
+| `skip-proxy` | 排除的 IP/域名不走 HTTP 代理 | 防止 503 错误 |
+| `[Rule] IP-CIDR` | SR 引擎内部的流量判定 | 确保被判定为 DIRECT |
+
+## 排查过程记录
+
+1. **skip-proxy 配置** - 移除 IP 段后问题仍存在，非根因
+2. **tun-excluded-routes 配置** - SR 可能不支持这个 Surge 专有配置
+3. **手动删除路由** - `sudo route delete -net 100.64.0.0/10 <网关>` 有效，确认是路由冲突
+4. **最终方案** - 通过 Module 重写 `bypass-tun` 彻底解决
+
+## 参考资料
+
+- [Apple Developer - NetworkExtension](https://developer.apple.com/documentation/networkextension)
