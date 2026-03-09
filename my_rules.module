@@ -43,6 +43,7 @@ DOMAIN-SUFFIX,google.com,PROXY
 DOMAIN-SUFFIX,googleapis.com,PROXY
 DOMAIN-SUFFIX,gstatic.com,PROXY
 DOMAIN-SUFFIX,googleusercontent.com,PROXY
+DOMAIN-SUFFIX,google-analytics.com,PROXY
 DOMAIN-SUFFIX,youtube.com,PROXY
 DOMAIN-SUFFIX,ytimg.com,PROXY
 DOMAIN-SUFFIX,ggpht.com,PROXY
