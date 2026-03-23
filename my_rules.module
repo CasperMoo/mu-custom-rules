@@ -14,6 +14,13 @@ bypass-tun = 10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.0.0.0/24,19
 skip-proxy = 100.64.0.0/10, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
 
 [Rule]
+# ============ 公司内网直连 ============
+# 美团/桑凯域名直连（Fake IP 模式下必须添加，否则会走代理）
+DOMAIN-SUFFIX,sankuai.com,DIRECT
+DOMAIN-SUFFIX,meituan.com,DIRECT
+DOMAIN-SUFFIX,sankuai.org,DIRECT
+DOMAIN-SUFFIX,mt.com,DIRECT
+
 # ============ Tailscale 直连 ============
 # 确保 Tailscale 的流量在 SR 引擎内部也被判定为直连
 IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
