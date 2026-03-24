@@ -13,8 +13,8 @@ bypass-tun = 10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.0.0.0/24,19
 # 2. skip-proxy：添加 100.64.0.0/10 防止 HTTP 代理引擎拦截导致 503
 skip-proxy = 100.64.0.0/10, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
 
-# 3. real-ip：让公司域名返回真实 IP，跳过 Fake IP
-real-ip = *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
+# 3. fake-ip-filter：排除公司域名，不使用 Fake IP
+fake-ip-filter = *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
 
 [Rule]
 # ============ 公司内网直连 ============
