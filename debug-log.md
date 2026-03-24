@@ -40,6 +40,18 @@
 
 **尝试 2**：改为 `[Host] *.sankuai.com = system` → 让公司域名使用系统 DNS
 
+**结果**：❌ 仍然返回 Fake IP，配置未生效
+
+---
+
+### 阶段 4：使用 real-ip 指令
+
+**新方案**：在 `[General]` 中添加 `real-ip` 指令，这是 SR 支持的让特定域名跳过 Fake IP 的正确方式。
+
+```ini
+real-ip = *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
+```
+
 **结果**：待测试...
 
 ---
