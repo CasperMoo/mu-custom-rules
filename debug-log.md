@@ -44,15 +44,25 @@
 
 ---
 
-### 阶段 4：使用 real-ip 指令
+### 阶段 4：尝试各种 Fake IP 排除配置
 
-**新方案**：在 `[General]` 中添加 `real-ip` 指令，这是 SR 支持的让特定域名跳过 Fake IP 的正确方式。
+| 配置 | 语法 | 结果 |
+|------|------|------|
+| `[General] real-ip` | `real-ip = *.sankuai.com` | ❌ 不生效 |
+| `[General] always-real-ip` | `always-real-ip = *.sankuai.com` | ❌ 不生效 |
+| `[General] fake-ip-filter` | `fake-ip-filter = *.sankuai.com` | ❌ 不生效 |
 
-```ini
-real-ip = *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
-```
+**结论**: Shadowrocket Module 可能不支持这些 Surge 语法，或者配置被主订阅覆盖。
 
-**结果**：待测试...
+---
+
+### 阶段 5：下一步方案
+
+1. **切换 DNS 模式**: 从 Fake IP 切换到 Redir Host
+2. **检查 Module 优先级**: 确认配置是否被主订阅覆盖
+3. **特定 IP 方案**: 用户建议只处理特定 Tailscale IP
+
+完整排查记录见 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ---
 
