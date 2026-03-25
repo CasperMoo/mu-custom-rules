@@ -1,83 +1,43 @@
 # Shadowrocket 内网域名访问问题排查日志
 
-## 问题现象
+## 状态：✅ 已解决
 
-开启 Shadowrocket 后，访问 `*.sankuai.com` 等公司内网域名失败。
+---
 
-## 排查进展
+## 排查阶段总结
 
 ### 阶段 1：Fake IP 路由问题
-
-**发现**：SR 开启后，DNS 返回 Fake IP (198.18.0.x)，但 `bypass-tun` 包含 `198.18.0.0/15`，导致 Fake IP 流量被路由到物理网关而非 SR TUN。
-
-**解决**：从 `bypass-tun` 中移除 `198.18.0.0/15`。
-
-**结果**：Fake IP 流量正确进入 SR TUN，但仍然失败。
-
----
+- **问题**：bypass-tun 包含 198.18.0.0/15，Fake IP 流量被路由到物理网关
+- **解决**：移除 198.18.0.0/15
 
 ### 阶段 2：规则匹配问题
+- **问题**：缺少 DIRECT 规则
+- **解决**：添加 DOMAIN-SUFFIX,sankuai.com,DIRECT
 
-**发现**：`[Rule]` 中没有 sankuai.com 的直连规则，导致走默认代理策略。
+### 阶段 3：尝试跳过 Fake IP
+- **尝试**：real-ip、system、fake-ip-filter 等
+- **结果**：全部失败，fake-ip-filter 导致配置解析错误
 
-**解决**：添加 `DOMAIN-SUFFIX,sankuai.com,DIRECT` 等规则。
-
-**结果**：TCP 连接成功，但 TLS 握手失败。
-
----
-
-### 阶段 3：TLS 握手问题
-
-**发现**：
-- TCP 连接到 Fake IP 成功
-- TLS 握手时 SR 关闭连接（`SSL_ERROR_SYSCALL`）
-- 服务器没有返回证书
-- 直连真实 IP (10.192.22.20) TLS 正常
-
-**分析**：SR 在处理 DIRECT 规则时，内部连接真实服务器失败。
-
-**尝试 1**：添加 `[Host] real-ip` 配置 → SR 不支持此语法
-
-**尝试 2**：改为 `[Host] *.sankuai.com = system` → 让公司域名使用系统 DNS
-
-**结果**：❌ 仍然返回 Fake IP，配置未生效
+### 阶段 4：DNS 解析盲区（最终定位）
+- **发现**：SR 内部使用公共 DNS 解析真实 IP，无法解析内网域名
+- **解决**：[Host] 指定 server:11.11.11.11，bypass-tun 添加 DNS 服务器 IP
 
 ---
 
-### 阶段 4：尝试各种 Fake IP 排除配置
+## 最终解决方案
 
-| 配置 | 语法 | 结果 |
-|------|------|------|
-| `[General] real-ip` | `real-ip = *.sankuai.com` | ❌ 不生效 |
-| `[General] always-real-ip` | `always-real-ip = *.sankuai.com` | ❌ 不生效 |
-| `[General] fake-ip-filter` | `fake-ip-filter = *.sankuai.com` | ❌ 不生效 |
+```ini
+[General]
+bypass-tun = 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, 11.11.11.11/32
 
-**结论**: Shadowrocket Module 可能不支持这些 Surge 语法，或者配置被主订阅覆盖。
+[Host]
+*.sankuai.com = server:11.11.11.11
+*.meituan.com = server:11.11.11.11
 
----
-
-### 阶段 5：下一步方案
-
-1. **切换 DNS 模式**: 从 Fake IP 切换到 Redir Host
-2. **检查 Module 优先级**: 确认配置是否被主订阅覆盖
-3. **特定 IP 方案**: 用户建议只处理特定 Tailscale IP
-
-完整排查记录见 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+[Rule]
+DOMAIN-SUFFIX,sankuai.com,DIRECT
+```
 
 ---
 
-## 当前状态
-
-- [x] bypass-tun 移除 198.18.0.0/15
-- [x] bypass-tun 移除 100.64.0.0/10 (Tailscale)
-- [x] skip-proxy 添加公司域名
-- [x] [Rule] 添加公司域名 DIRECT 规则
-- [x] [Host] 添加 system DNS 配置
-- [ ] 测试验证
-
-## 下一步
-
-1. 推送更新到 GitHub
-2. SR 中更新模块
-3. 测试 DNS 解析是否返回真实 IP
-4. 测试 HTTPS 连接
+详细记录见 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
