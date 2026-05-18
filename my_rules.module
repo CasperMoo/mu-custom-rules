@@ -45,6 +45,13 @@ DOMAIN-SUFFIX,statsigapi.net,PROXY
 DOMAIN-SUFFIX,featuregates.org,PROXY
 DOMAIN-SUFFIX,intercom.io,PROXY
 DOMAIN-SUFFIX,intercomcdn.com,PROXY
+DOMAIN-SUFFIX,intercom.help,PROXY
+DOMAIN-SUFFIX,intercomassets.com,PROXY
+DOMAIN-SUFFIX,hcaptcha.com,PROXY
+DOMAIN-SUFFIX,sentry.io,PROXY
+DOMAIN-SUFFIX,datadoghq.com,PROXY
+DOMAIN-SUFFIX,browser-intake-datadoghq.com,PROXY
+DOMAIN-SUFFIX,cloudflare.com,PROXY
 
 # Anthropic/Claude 走代理
 DOMAIN-SUFFIX,anthropic.com,PROXY
