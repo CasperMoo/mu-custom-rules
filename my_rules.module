@@ -34,6 +34,68 @@ IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve
 IP-CIDR,11.39.138.232/32,DIRECT,no-resolve
 IP-CIDR,11.64.61.109/32,DIRECT,no-resolve
 
+# ============ Zoom 直连（关键：避免 UDP 音视频媒体流被代理丢弃导致断联）============
+# 域名直连（zoom.com 已覆盖 meituan.zoom.com 等企业子域）
+DOMAIN-SUFFIX,zoom.us,DIRECT
+DOMAIN-SUFFIX,zoom.com,DIRECT
+DOMAIN-SUFFIX,zoomgov.com,DIRECT
+DOMAIN-SUFFIX,zoom.com.cn,DIRECT
+DOMAIN-SUFFIX,zmcdn.com,DIRECT
+DOMAIN-SUFFIX,zoomcdn.com,DIRECT
+# Zoom 官方媒体 IP 段（来源 Zoom network firewall ranges，可能随官方更新）
+IP-CIDR,3.7.35.0/25,DIRECT,no-resolve
+IP-CIDR,3.21.137.128/25,DIRECT,no-resolve
+IP-CIDR,3.22.11.0/24,DIRECT,no-resolve
+IP-CIDR,3.23.93.0/24,DIRECT,no-resolve
+IP-CIDR,3.25.41.128/25,DIRECT,no-resolve
+IP-CIDR,3.25.42.0/25,DIRECT,no-resolve
+IP-CIDR,3.25.49.0/24,DIRECT,no-resolve
+IP-CIDR,3.80.20.128/25,DIRECT,no-resolve
+IP-CIDR,3.96.19.0/24,DIRECT,no-resolve
+IP-CIDR,3.101.32.128/25,DIRECT,no-resolve
+IP-CIDR,3.101.52.0/25,DIRECT,no-resolve
+IP-CIDR,3.104.34.128/25,DIRECT,no-resolve
+IP-CIDR,3.120.121.0/25,DIRECT,no-resolve
+IP-CIDR,3.127.194.128/25,DIRECT,no-resolve
+IP-CIDR,3.208.72.0/25,DIRECT,no-resolve
+IP-CIDR,3.211.241.0/25,DIRECT,no-resolve
+IP-CIDR,3.235.69.0/25,DIRECT,no-resolve
+IP-CIDR,3.235.71.128/25,DIRECT,no-resolve
+IP-CIDR,3.235.72.128/25,DIRECT,no-resolve
+IP-CIDR,3.235.73.0/25,DIRECT,no-resolve
+IP-CIDR,3.235.82.0/23,DIRECT,no-resolve
+IP-CIDR,3.235.96.0/23,DIRECT,no-resolve
+IP-CIDR,4.34.125.128/25,DIRECT,no-resolve
+IP-CIDR,4.35.64.128/25,DIRECT,no-resolve
+IP-CIDR,8.5.128.0/23,DIRECT,no-resolve
+IP-CIDR,18.205.93.128/25,DIRECT,no-resolve
+IP-CIDR,52.61.100.128/25,DIRECT,no-resolve
+IP-CIDR,52.202.62.192/26,DIRECT,no-resolve
+IP-CIDR,52.215.118.0/24,DIRECT,no-resolve
+IP-CIDR,103.122.166.0/23,DIRECT,no-resolve
+IP-CIDR,111.33.115.0/25,DIRECT,no-resolve
+IP-CIDR,115.110.154.192/26,DIRECT,no-resolve
+IP-CIDR,115.114.56.192/26,DIRECT,no-resolve
+IP-CIDR,115.114.115.0/24,DIRECT,no-resolve
+IP-CIDR,115.114.131.0/24,DIRECT,no-resolve
+IP-CIDR,120.29.148.0/24,DIRECT,no-resolve
+IP-CIDR,149.137.0.0/17,DIRECT,no-resolve
+IP-CIDR,150.230.224.0/24,DIRECT,no-resolve
+IP-CIDR,160.1.56.128/25,DIRECT,no-resolve
+IP-CIDR,162.12.232.0/22,DIRECT,no-resolve
+IP-CIDR,162.255.36.0/22,DIRECT,no-resolve
+IP-CIDR,165.254.88.0/23,DIRECT,no-resolve
+IP-CIDR,170.114.0.0/16,DIRECT,no-resolve
+IP-CIDR,173.231.80.0/20,DIRECT,no-resolve
+IP-CIDR,192.204.12.0/22,DIRECT,no-resolve
+IP-CIDR,198.251.128.0/17,DIRECT,no-resolve
+IP-CIDR,202.177.207.128/27,DIRECT,no-resolve
+IP-CIDR,204.80.104.0/21,DIRECT,no-resolve
+IP-CIDR,207.226.132.0/24,DIRECT,no-resolve
+IP-CIDR,209.9.211.0/24,DIRECT,no-resolve
+IP-CIDR,213.19.144.0/24,DIRECT,no-resolve
+IP-CIDR,213.244.140.0/24,DIRECT,no-resolve
+
 # ============ 代理规则 ============
 # ChatGPT/OpenAI 走代理
 DOMAIN-SUFFIX,chatgpt.com,PROXY
