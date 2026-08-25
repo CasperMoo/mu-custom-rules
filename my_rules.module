@@ -9,7 +9,10 @@
 bypass-tun = 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, 11.11.11.11/32, 11.39.138.232/32, 11.64.61.109/32
 
 # 2. skip-proxy：防止 HTTP 代理引擎拦截内网
-skip-proxy = 100.64.0.0/10, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 11.39.138.232/32, 11.64.61.109/32, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
+#    ⚠️ 严禁加入 100.64.0.0/10（Tailscale 段）：skip-proxy 段会被编程为指向物理网关的
+#    高优先级系统路由，压过 Tailscale 的 utun 路由（见 TROUBLESHOOTING.md 问题三）。
+#    所有 TS 设备地址（100.64.0.0/10 全段）由下方 [Rule] 的 DIRECT 规则放行。
+skip-proxy = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 11.39.138.232/32, 11.64.61.109/32, 127.0.0.1, localhost, *.local, *.lan, *.sankuai.com, *.meituan.com, *.sankuai.org, *.mt.com
 
 [Host]
 # ============ 强制内网域名使用公司 DNS 解析 ============
@@ -26,7 +29,7 @@ DOMAIN-SUFFIX,meituan.com,DIRECT
 DOMAIN-SUFFIX,sankuai.org,DIRECT
 DOMAIN-SUFFIX,mt.com,DIRECT
 
-# ============ Tailscale 直连 ============
+# ============ Tailscale 直连（100.64.0.0/10 覆盖所有 TS 设备；引擎层放行，不创建系统路由）============
 IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
 IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve
 

@@ -128,12 +128,61 @@ DOMAIN-SUFFIX,meituan.com,DIRECT
 
 ---
 
+## 问题三：Tailscale 路由冲突复发（skip-proxy）🔬 待设备端验证
+
+### 问题现象
+
+- mini → 盒子（100.78.36.121）TS SSH 失败，包被丢给家里路由器
+- `route get 100.78.36.121` → `gateway: 10.0.0.1, interface: en0`
+
+```
+100.64/10 → 10.0.0.1 → en0    (SR 创建)   ← 赢
+100.64/10 → utun11           (Tailscale)  ← 被压住
+```
+
+### 与问题一的区别
+
+问题一修复时只从 `bypass-tun` 剔除了 `100.64.0.0/10`，但 `skip-proxy` 中仍保留该段
+（当时为防 HTTP 代理引擎拦截而加入）。本次在模块已存在的机器上实测：SR 运行时
+en0 网关路由再次出现 → **skip-proxy 段同样会被编程为指向物理网关的系统路由**。
+
+排除项：
+- 路由器 DHCP 未下发 option 121 静态路由（`ipconfig getpacket en0` 无 classless route）
+- 问题一时已实验证明：SR 关闭 → 冲突路由消失
+
+### 修复（2026-08-25）
+
+从 `skip-proxy` 移除 `100.64.0.0/10`。TS 全段（所有设备）的放行统一由引擎层规则承担：
+
+```ini
+[Rule]
+IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve
+```
+
+引擎层 DIRECT 不创建系统路由，不会压过 Tailscale 的 utun。
+
+### 验证步骤（设备端）
+
+1. SR 中更新模块并重启（让 TUN 重建）
+2. `netstat -rn -f inet | grep '100.64'` → 应只剩 utun 一条
+3. `route get 100.78.36.121` → interface 应为 utun11
+4. TS SSH 恢复
+
+应急手段（临时，SR 重启后复原）：
+
+```bash
+sudo route delete -net 100.64.0.0/10 10.0.0.1
+```
+
+---
+
 ## 关键配置项说明
 
 | 配置项 | 作用层级 | 说明 |
 |--------|----------|------|
 | `bypass-tun` | 系统路由 | 排除的 IP 不走 TUN，系统创建指向物理网关的路由 |
-| `skip-proxy` | HTTP 代理 | 排除的 IP/域名不走 HTTP 代理，防止 503 |
+| `skip-proxy` | HTTP 代理 + 系统路由 | 排除的 IP/域名不走 HTTP 代理；⚠️ 段同样会被编程为指向物理网关的系统路由（问题三） |
 | `[Rule]` | SR 引擎 | 流量判定规则，决定 DIRECT/PROXY |
 | `[Host]` | DNS 映射 | 域名到 DNS 服务器的映射，`server:x.x.x.x` 指定 DNS |
 
@@ -153,11 +202,13 @@ DIRECT 时：SR 内部解析真实 IP → 连接真实服务器
 
 **关键点**：SR 内部解析真实 IP 时，需要正确的 DNS 服务器！
 
-### 2. bypass-tun 的陷阱
+### 2. bypass-tun / skip-proxy 的陷阱
 
 - `bypass-tun` 会创建指向物理网关的高优先级路由
 - 如果包含 Tailscale 网段（100.64.0.0/10），会破坏 Tailscale 连接
 - 如果包含 Fake IP 网段（198.18.0.0/15），Fake IP 流量无法进入 SR
+- `skip-proxy` 段同样会被编程为系统路由（问题三），Tailscale 网段也不可放入
+- TS 设备的排除统一走 `[Rule]` 引擎层 DIRECT（`IP-CIDR,100.64.0.0/10`），不碰系统路由
 
 ### 3. 内网域名与 Fake IP 的兼容
 
@@ -205,3 +256,4 @@ default            → utun7 (SR TUN)
 | c2d9338 | 尝试 fake-ip-filter（导致配置解析错误） |
 | c21fbfe | 回滚到稳定配置 |
 | cccd966 | **最终方案**：[Host] 指定公司 DNS |
+| 5fb7e11 | **问题三修复**：skip-proxy 移除 Tailscale 段，TS 放行统一走 [Rule] |
